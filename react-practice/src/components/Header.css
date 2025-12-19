@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  background: #0f172a;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.logo img {
+  height: 36px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-name {
+  color: white;
+  cursor: pointer;
+}
+
+.logout-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  background: #ff4d4f;
+  color: white;
+  cursor: pointer;
+}
