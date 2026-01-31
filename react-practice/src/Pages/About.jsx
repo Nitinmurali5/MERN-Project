@@ -8,8 +8,8 @@ const About = () => {
       <section className="about-hero">
         <h1>About E-Kart</h1>
         <p>
-          A modern e-commerce platform built to deliver a seamless, secure, and
-          intuitive shopping experience.
+          A modern e-commerce and quick-commerce platform built to deliver a seamless, secure, and
+          intuitive shopping experience for both products and groceries.
         </p>
       </section>
 
@@ -17,9 +17,9 @@ const About = () => {
       <section className="about-section">
         <h2>Our Mission</h2>
         <p>
-          Our mission is to build an e-commerce solution that combines modern web
-          technologies with intuitive design. We aim to make online shopping
-          simple, fast, and accessible for everyone.
+          Our mission is to build a digital commerce solution that combines modern web
+          technologies with intuitive design. We aim to make online shopping — from electronics
+          to daily groceries — simple, fast, and accessible for everyone.
         </p>
       </section>
 
@@ -28,9 +28,10 @@ const About = () => {
         <ul>
           <li>Clean and responsive user interface</li>
           <li>Secure authentication system</li>
-          <li>Organized product browsing</li>
+          <li>Organized browsing for products and groceries</li>
+          <li>Quick access to daily essentials</li>
           <li>Scalable and maintainable architecture</li>
-          <li>Modern UI inspired by real-world platforms</li>
+          <li>Modern UI inspired by real-world e-commerce and quick-commerce platforms</li>
         </ul>
       </section>
 
@@ -44,16 +45,15 @@ const About = () => {
         </ul>
       </section>
 
-     
-
       <section className="about-section card">
         <h2>Future Enhancements</h2>
         <ul>
-          <li>Shopping cart and checkout flow</li>
-          <li>Advanced product filtering</li>
+          <li>Shopping cart and fast checkout flow</li>
+          <li>Advanced product and grocery filtering</li>
           <li>User profiles and order history</li>
           <li>Payment gateway integration</li>
-          <li>Admin product management dashboard</li>
+          <li>Admin dashboard for product and grocery management</li>
+          <li>Real-time order tracking and delivery updates</li>
         </ul>
       </section>
 

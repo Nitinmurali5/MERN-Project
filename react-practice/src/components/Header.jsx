@@ -12,28 +12,44 @@ function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const name =
-      localStorage.getItem("username") ||
-      localStorage.getItem("userEmail");
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const updateAuthState = () => {
+      const token = localStorage.getItem("token");
+      const name =
+        localStorage.getItem("username") ||
+        localStorage.getItem("userEmail");
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    if (token && name) {
-      setIsLoggedIn(true);
-      setUsername(name);
-    } else {
-      setIsLoggedIn(false);
-      setUsername("");
-    }
+      if (token && name) {
+        setIsLoggedIn(true);
+        setUsername(name);
+      } else {
+        setIsLoggedIn(false);
+        setUsername("");
+      }
 
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    setCartCount(totalItems);
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      setCartCount(totalItems);
+    };
+
+    updateAuthState();
+    
+    window.addEventListener('storage', updateAuthState);
+    window.addEventListener('authChange', updateAuthState);
+    
+    return () => {
+      window.removeEventListener('storage', updateAuthState);
+      window.removeEventListener('authChange', updateAuthState);
+    };
   }, []);
 
   function handleLogout() {
     localStorage.clear();
     setIsLoggedIn(false);
     setShowProfile(false);
+    
+  
+    window.dispatchEvent(new Event('authChange'));
+    
     navigate("/signin");
   }
 

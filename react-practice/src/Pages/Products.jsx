@@ -89,7 +89,7 @@ const Products = () => {
   );
 };
 
-/* ===== Inline Styles ===== */
+
 
 const page = {
   padding: "30px",

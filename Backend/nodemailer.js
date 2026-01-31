@@ -1,11 +1,11 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config(); 
 
-// Debug: Check if env variables are loaded
+
 console.log('GMAIL_USER:', process.env.GMAIL_USER ? '✓ Loaded' : '✗ Missing');
 console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? '✓ Loaded' : '✗ Missing');
 
-// Gmail SMTP configuration
+
 const transporter = nodemailer.createTransport({
   service: 'gmail', 
   auth: {
@@ -14,7 +14,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Email configuration
 const mailOptions = {
   from: process.env.GMAIL_USER,
   to: 'nitin.m2024cce@sece.ac.in', 
@@ -27,7 +26,7 @@ const mailOptions = {
 
 console.log('📧 Sending email...');
 
-// Send the email
+
 transporter.sendMail(mailOptions, (error, info) => {
   if (error) {
     console.log('❌ Error occurred:', error.message);

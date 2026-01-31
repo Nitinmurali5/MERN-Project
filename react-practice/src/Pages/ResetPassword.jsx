@@ -49,7 +49,9 @@ const ResetPassword = () => {
         <input
           className="auth-input"
           placeholder="Enter OTP"
-          onChange={(e) => setOtp(e.target.value)}
+          value={otp}
+          onChange={(e) => setOtp(e.target.value.trim())}
+          maxLength={6}
           required
         />
 
@@ -69,7 +71,19 @@ const ResetPassword = () => {
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup-box">
+            <button 
+              className="popup-close" 
+              onClick={() => setShowPopup(false)}
+            >
+              ×
+            </button>
             <p>{popupMsg}</p>
+            <button
+              className="popup-btn"
+              onClick={() => setShowPopup(false)}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}

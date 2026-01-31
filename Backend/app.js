@@ -1,6 +1,6 @@
-//build a server
+
 const dotenv=require("dotenv");
-//dotenv
+
 dotenv.config();
 const express=require("express");
 const bcrypt = require("bcrypt");
@@ -11,16 +11,22 @@ const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASS = process.env.EMAIL_PASS;
 
 const transmailer = nodemailer.createTransport({
-  service: "gmail",
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
   auth: {
     user: EMAIL_USER,
     pass: EMAIL_PASS
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
 const secretkey=process.env.SECRET_KEY;
 const port = process.env.PORT || 3000;
-//s1-import the package to connect with mongodb
+
 const mongoose=require("mongoose");
 const app=express();
 const cors = require('cors');                                                                        
@@ -31,7 +37,6 @@ app.use(cors({
 app.use(express.json())
 app.use(helmet())
 
-//s2 Estabilish the connection
 async function connection()
 {
  await mongoose.connect(process.env.MONGODB_URL)
@@ -44,7 +49,7 @@ async function connection()
 }
 
 
-//s3=Create schemaa
+
 let productSchema=
 new mongoose.Schema({
     title:
@@ -68,22 +73,22 @@ new mongoose.Schema({
     }
 })
 
-//s4 Create a model
+
 let Product=mongoose.model("Product",productSchema);
 
 
 
 const {rateLimit}=require("express-rate-limit")
 const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	limit: 100, // Limit each IP to 100 requests per window (here, per 15 minutes).
-	standardHeaders: 'draft-8', // draft-6: RateLimit-* headers; draft-7 & draft-8: combined RateLimit header
-	legacyHeaders: false, // Disable the X-RateLimit-* headers.
-	ipv6Subnet: 56, // Set to 60 or 64 to be less aggressive, or 52 or 48 to be more aggressive
-	// store: ... , // Redis, Memcached, etc. See below.
+	windowMs: 15 * 60 * 1000, 
+	limit: 100, 
+	standardHeaders: 'draft-8', 
+	legacyHeaders: false, 
+	ipv6Subnet: 56, 
+	
 })
 app.use(limiter)
-//------------User Model------------
+
 let userschema = new mongoose.Schema({
   username: { type: String },
   email: { type: String, required: true, unique: true },
@@ -93,11 +98,9 @@ let userschema = new mongoose.Schema({
   otpExpiry: { type: Date }
 });
 
-//create model
 let userModel=mongoose.model("users",userschema)
 
-//---API's----
-//api-1 Store products in the database
+
 app.post('/products',async(req,res)=>{
   try {
     const {title,price,image,description}=req.body
@@ -115,7 +118,7 @@ app.post('/products',async(req,res)=>{
   }
   
 })
-//api-1.2
+
 app.post('/signup',async(req,res)=>
 {
   try{
@@ -135,7 +138,7 @@ app.post('/signup',async(req,res)=>
       msg:"User is added successfully"
     })
    
-    // let hashedpassword=await bcrypt.hash(password,10)
+    
   }
   catch(error){
     res.json({
@@ -143,7 +146,7 @@ app.post('/signup',async(req,res)=>
     })
   }
 })
-//api for authentication
+
 app.post('/signin',async(req,res)=>{
   try {
 
@@ -156,7 +159,7 @@ app.post('/signin',async(req,res)=>{
       })
       
     }
-      //check password
+      
       let checkPassword=await bcrypt.compare(password,userdetails.password)
       if(!checkPassword)
       {
@@ -164,35 +167,28 @@ app.post('/signin',async(req,res)=>{
           msg:"Username & Password incorrect"
         })
       }
-      //generate token
-      let payload={email:email}//unique details
-      let token= await jwt.sign(payload,secretkey,{expiresIn:"1h"})
-     try{
-      await transmailer.sendMail({
-      from:`"My email" <${process.env.EMAIL_USER}>`,
-      to:email,
-      subject:"Login to our mail is successful",
-      html: `
-        <h2>Login Successful</h2>
-        <p>Hello <b>${userdetails.username || "User"}</b>,</p>
-        <p>You have successfully signed in to your account.</p>
-        <p>If this wasn't you, please secure your account immediately.</p>
-      `
-    })
      
-  }
-   catch(mailErr)
-    {
-       console.log("Mail failed:", mailErr.message);
-        res.status(200).json({
-        msg:"Login successful",
-        token:token
-      })
-    }
+      let payload={email:email}
+      let token= await jwt.sign(payload,secretkey,{expiresIn:"1h"})
+      
+      
+      transmailer.sendMail({
+        from:`"My email" <${process.env.EMAIL_USER}>`,
+        to:email,
+        subject:"Login to our mail is successful",
+        html: `
+          <h2>Login Successful</h2>
+          <p>Hello <b>${userdetails.username || "User"}</b>,</p>
+          <p>You have successfully signed in to your account.</p>
+          <p>If this wasn't you, please secure your account immediately.</p>
+        `
+      }).catch(mailErr => {
+        console.log("Mail failed:", mailErr.message);
+      });
        
-    res.status(200).json({
-        msg:"Login successful",
-        token:token
+      res.status(200).json({
+          msg:"Login successful",
+          token:token
       })
 
     
@@ -205,6 +201,36 @@ app.post('/signin',async(req,res)=>{
   }
 })
 
+
+app.post("/test-email", async (req, res) => {
+  console.log("Testing email with:");
+  console.log("EMAIL_USER:", EMAIL_USER);
+  console.log("EMAIL_PASS:", EMAIL_PASS ? "[SET]" : "[NOT SET]");
+  
+  try {
+    const info = await transmailer.sendMail({
+      from: `"Test" <${EMAIL_USER}>`,
+      to: EMAIL_USER,
+      subject: "Test Email",
+      text: "Email configuration is working!"
+    });
+    console.log("Email sent successfully:", info.messageId);
+    res.json({ msg: "Test email sent successfully", messageId: info.messageId });
+  } catch (error) {
+    console.error("Detailed error:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+    res.status(500).json({ 
+      msg: "Test email failed", 
+      error: error.message,
+      code: error.code 
+    });
+  }
+});
+
 app.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
@@ -214,35 +240,44 @@ app.post("/forgot-password", async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    // Generate 6-digit OTP
+    
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // OTP valid for 10 minutes
+    
     user.otp = otp;
     user.otpExpiry = Date.now() + 10 * 60 * 1000;
 
     await user.save();
 
-    // Send OTP via email
-    await transmailer.sendMail({
-      from: `"E-Kart Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Password Reset OTP",
-      html: `
-        <h2>Password Reset Request</h2>
-        <p>Your OTP is:</p>
-        <h1>${otp}</h1>
-        <p>This OTP is valid for 10 minutes.</p>
-      `
-    });
+   
+    try {
+      await transmailer.sendMail({
+        from: `"E-Kart Support" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Password Reset OTP",
+        html: `
+          <h2>Password Reset Request</h2>
+          <p>Your OTP is:</p>
+          <h1>${otp}</h1>
+          <p>This OTP is valid for 10 minutes.</p>
+        `
+      });
 
-    res.status(200).json({
-      msg: "OTP sent to your email"
-    });
+      res.status(200).json({
+        msg: "OTP sent to your email"
+      });
+    } catch (mailError) {
+      console.error("Email sending failed:", mailError);
+      res.status(500).json({
+        msg: "Failed to send OTP. Please check email configuration.",
+        error: mailError.message
+      });
+    }
 
   } catch (error) {
+    console.error("Forgot password error:", error);
     res.status(500).json({
-      msg: "Failed to send OTP",
+      msg: "Server error",
       error: error.message
     });
   }
@@ -252,13 +287,17 @@ app.post("/reset-password", async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
 
+    console.log("Reset password attempt:", { email, otp: otp?.length });
+
     const user = await userModel.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    if (!user.otp || user.otp !== otp) {
+    console.log("User OTP:", user.otp, "Provided OTP:", otp);
+
+    if (!user.otp || user.otp !== otp.toString()) {
       return res.status(400).json({ msg: "Invalid OTP" });
     }
 
@@ -266,7 +305,7 @@ app.post("/reset-password", async (req, res) => {
       return res.status(400).json({ msg: "OTP expired" });
     }
 
-    // Hash new password
+    
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     user.password = hashedPassword;
@@ -280,6 +319,7 @@ app.post("/reset-password", async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Reset password error:", error);
     res.status(500).json({
       msg: "Failed to reset password",
       error: error.message
@@ -287,14 +327,14 @@ app.post("/reset-password", async (req, res) => {
   }
 });
 
-//api-2 Fetch all products
+
 app.get('/products',async(req,res)=>
 {
   try {
     let products=await Product.find({})
     res.status(200).json({
       products
-    })
+  })
     
   } catch (error) {
     res.json({
@@ -303,7 +343,7 @@ app.get('/products',async(req,res)=>
     
   }
 })
-//api-3 Delete a products
+
 app.delete('/products/:id',async(req,res)=>
 {
   try {
@@ -320,7 +360,7 @@ app.delete('/products/:id',async(req,res)=>
     
   }
 })
-//api-4 Update a product
+
 app.put('/products/:id',async(req,res)=>
 {
   try {
@@ -374,6 +414,8 @@ const Order = mongoose.model("orders", orderSchema);
  app.post("/orders", async (req, res) => {
   try {
     const { user, items, address, paymentMethod, totalAmount } = req.body;
+    
+    console.log("Order request:", { user, items: items?.length, address, paymentMethod, totalAmount });
 
     if (!items || items.length === 0) {
       return res.status(400).json({ msg: "No items in order" });
@@ -387,12 +429,14 @@ const Order = mongoose.model("orders", orderSchema);
       totalAmount
     };
 
-    await Order.create(newOrder);
+    const savedOrder = await Order.create(newOrder);
+    console.log("Order saved:", savedOrder._id);
 
     res.status(201).json({
       msg: "Order placed successfully"
     });
   } catch (error) {
+    console.error("Order creation error:", error);
     res.status(500).json({
       msg: error.message
     });

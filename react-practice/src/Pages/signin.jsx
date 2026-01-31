@@ -29,6 +29,8 @@ const Signin = () => {
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userEmail", email);
+        
+        window.dispatchEvent(new Event('authChange'));
 
         setTimeout(() => {
           navigate("/");

@@ -13,13 +13,15 @@ const Cart = () => {
       return;
     }
 
-    const storedCart = JSON.parse(localStorage.getItem("cart")|| []);
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
   }, [navigate]);
 
   function updateCart(updatedCart) {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    
+    window.dispatchEvent(new Event('authChange'));
   }
 
   function increaseQty(id) {
@@ -50,7 +52,26 @@ const Cart = () => {
   );
 
   if (cart.length === 0) {
-    return <h2 style={{ textAlign: "center", marginTop: "40px" }}>Your cart is empty</h2>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "40px" }}>
+        <h2>Your cart is empty</h2>
+        <button 
+          style={{
+            marginTop: "20px",
+            padding: "12px 24px",
+            background: "#6366f1",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            fontSize: "16px",
+            cursor: "pointer"
+          }}
+          onClick={() => navigate("/products")}
+        >
+          Continue Shopping
+        </button>
+      </div>
+    );
   }
 
   return (

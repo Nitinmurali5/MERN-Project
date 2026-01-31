@@ -21,6 +21,7 @@ function Home() {
           <div className="category-card">Electronics</div>
           <div className="category-card">Accessories</div>
           <div className="category-card">Smart Devices</div>
+          <div className="category-card">Groceries</div>
         </div>
       </section>
 

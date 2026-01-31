@@ -77,3 +77,76 @@
 .place-order-btn:hover {
   opacity: 0.9;
 }
+
+.cod-details {
+  margin-top: 20px;
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.online-payment {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.payment-methods {
+  margin-bottom: 20px;
+}
+
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+}
+
+.card-input {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.card-row {
+  display: flex;
+  gap: 15px;
+}
+
+.card-row .card-input {
+  flex: 1;
+}
+
+.upi-section {
+  text-align: center;
+}
+
+.upi-section h4 {
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+.qr-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.qr-code p {
+  font-weight: 600;
+  color: #059669;
+}
+
+.card-input.error {
+  border-color: #dc2626;
+}
+
+.error-msg {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 5px;
+}
